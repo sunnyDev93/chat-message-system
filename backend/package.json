@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/server.js",
+    "migrate:generate": "npx sequelize-cli migration:generate --name",
     "dev": "ts-node-dev --respawn src/server.ts",
     "build": "tsc"
   },

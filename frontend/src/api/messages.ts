@@ -5,7 +5,7 @@ import { Message } from "../types/Message";
 const API_URL = "http://localhost:5000/api";
 
 const handleError = (error: any): void => {
-  const message = error?.response?.data?.message || "Server is not responding.";
+  const message = error?.response?.data?.error || "Server is not responding.";
   toast.error(message);
 };
 

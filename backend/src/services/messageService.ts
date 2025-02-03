@@ -1,10 +1,10 @@
 
 import { esClient } from "../config/elasticsearch";
-import Message from "../models/Message";
+import Messages from "../models/message";
 
 export class MessageService {
   static async createMessage(senderName: string, message: string) {
-    const newMessage = await Message.create({ senderName, message });
+    const newMessage = await Messages.create({ senderName, message });
 
     await esClient.index({
       index: 'messages',
@@ -21,22 +21,45 @@ export class MessageService {
   }
 
   static async getMessages() {
-    return await Message.findAll();
+    return await Messages.findAll();
   }
 
   static async searchMessages(query: string) {
     const { hits } = await esClient.search({
       index: 'messages',
       query: {
-        wildcard: {
-          message: {
-            value: `*${query}*`,
-            case_insensitive: true,
-          },
+        bool: {
+          should: [
+            {
+              match: {
+                message: {
+                  query: query,
+                  fuzziness: "AUTO",
+                },
+              },
+            },
+            {
+              match_phrase_prefix: {
+                message: {
+                  query: query,
+                },
+              },
+            },
+            {
+              wildcard: {
+                message: {
+                  value: `*${query}*`,
+                  case_insensitive: true,
+                },
+              },
+            },
+          ],
         },
       },
     });
   
     return hits.hits.map((hit: any) => hit._source);
   }
+  
+  
 }

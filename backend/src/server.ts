@@ -1,5 +1,4 @@
 import app from "./app";
-import { sequelize } from "./config/database";
 import dotenv from "dotenv";
 import { setupElastic } from "./config/setupElastic";
 
